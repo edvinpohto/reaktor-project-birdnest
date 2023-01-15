@@ -40,7 +40,12 @@ export async function createViolatorEntry(data) {
   const pilotId = data.pilotId;
   const person = await repository.search().where('pilotId').equals(pilotId).return.all()
   
+  // If the da
   if (person.length > 0) {
+    if (data.distance > person[0].distance) {
+      return
+    }
+
     console.log("update", person[0].lastName)
     const personToUpdate = await repository.fetch(person[0].entityId)
     
