@@ -2,6 +2,7 @@ import { useState } from "react"
 import getDrones from "../utils/getDrones";
 import useInterval from "../Hooks/useInterval.js"
 
+// Main component. Fetches data and displays it as a table. Styled with TailwindCSS.
 function Drones() {
   const url = 'http://localhost:3000/getDrones'
   const [droneData, setDroneData] = useState([])
@@ -17,8 +18,6 @@ function Drones() {
       setDroneData(drones.drones)
       })
   }, 2000);
-
-  console.log(droneData)
 
   return (
     <>

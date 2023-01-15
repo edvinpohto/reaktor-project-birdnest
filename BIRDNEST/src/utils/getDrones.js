@@ -1,7 +1,7 @@
+// Data fetching on the client side. URL parameter points at the server created for the task.
 const getDrones = (url) => {
   return new Promise(resolve => {
       fetch(url, {
-        // mode: 'cors',
         headers: {
         'Access-Control-Allow-Origin':'*',
         'Content-Type': 'application/json'

@@ -1,3 +1,4 @@
+// Function to format the date and time for the UI. However not used as per the instructions of the task.
 export default function formatDateAndTime(captureTime) {
   let day = captureTime.slice(8,10)
   let month = captureTime.slice(5,7)

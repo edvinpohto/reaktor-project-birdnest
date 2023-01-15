@@ -1,17 +1,21 @@
+// Using Redis and Redis OM to persist data created. https://redis.io/docs/stack/get-started/tutorials/stack-node/
+
 import * as dotenv from 'dotenv'
 import { Client, Entity, Schema, Repository } from 'redis-om'
 
 dotenv.config()
-const url = process.env.REDIS_URL;
+const url = process.env.REDIS_URL; // Environmental variable for Redis DB connection
 
 const client = new Client();
 
+// Connect to client if client is not open.
 async function connect() {
   if (!client.isOpen()) {
     await client.open(url);
   }
 }
 
+// Custom Entity and Schema for data
 class Violator extends Entity {}
 let schema = new Schema(
   Violator,
@@ -33,21 +37,21 @@ let schema = new Schema(
   }
 );
 
+// Main function for data storage logic. 
 export async function createViolatorEntry(data) {
   await connect();
   const repository = client.fetchRepository(schema);
 
   const pilotId = data.pilotId;
-  const person = await repository.search().where('pilotId').equals(pilotId).return.all()
+  const person = await repository.search().where('pilotId').equals(pilotId).return.all() // Fetch data with the pilotId of the violating drone
   
-  // If the da
+  // If the new violator already exists in the db, update data instead of creating a new entry.
   if (person.length > 0) {
-    if (data.distance > person[0].distance) {
+    if (data.distance > person[0].distance) { // If the new distance is further than the old distance, immediately return.
       return
     }
 
-    console.log("update", person[0].lastName)
-    const personToUpdate = await repository.fetch(person[0].entityId)
+    const personToUpdate = await repository.fetch(person[0].entityId) // Fetch data to be updated with entityId
     
     personToUpdate.captureTime = data.captureTime,
     personToUpdate.serialNumber = data.serialNumber,
@@ -61,27 +65,28 @@ export async function createViolatorEntry(data) {
     personToUpdate.createdDt = data.createdDt,
     personToUpdate.email = data.email
 
-    await repository.save(personToUpdate)
+    await repository.save(personToUpdate) // Save data update to DB
 
     const ttlInSeconds = 10 * 60  // Time to live: 10 minutes
-    await repository.expire(personToUpdate.entityId, ttlInSeconds)
+    await repository.expire(personToUpdate.entityId, ttlInSeconds) // Refresh TTL for updated data
 
     return
-  } else {
-    console.log("new", data.lastName)
 
-    await repository.createIndex()
+  } else { // If the violating pilot did not exist in the database, create a new entry
+
+    await repository.createIndex() // If index already exists, this is ignored automatically
 
     const entry = repository.createEntity(data);
     const id = await repository.save(entry);
 
     const ttlInSeconds = 10 * 60  // Time to live: 10 minutes
-    await repository.expire(id, ttlInSeconds)
+    await repository.expire(id, ttlInSeconds) // Set TTL
 
     return id
   }
 }
 
+// Function for data fetching for the client.
 export async function getEntries() {
   // Get entries from the db and return them
   // Called by an API endpoint on the main server
@@ -89,21 +94,7 @@ export async function getEntries() {
   
   const repository = new Repository(schema, client)
 
-  const drones = await repository.search().return.all()
+  const drones = await repository.search().return.all() // Returns all data
   
   return drones
 }
-
-
-
-// Old version, keep this for safety
-// const repository = client.fetchRepository(schema);
-// await repository.createIndex()
-
-// const entry = repository.createEntity(data);
-// const id = await repository.save(entry);
-
-// const ttlInSeconds = 10 * 60  // Time to live: 10 minutes
-// await repository.expire(id, ttlInSeconds)
-
-// return id

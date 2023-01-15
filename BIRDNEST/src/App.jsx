@@ -1,10 +1,8 @@
 import './styles/App.css'
-import { useState } from 'react'
 import Drones from './components/Drones'
 
+// Main App component for the page. Brings together the Drone component and some text paragraphs.
 function App() {
-  // const [droneData, setDroneData] = useState(getDrones)
-
   return (
     <>
       <div className='flex justify-center w-100'>
