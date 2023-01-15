@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { droneIsViolatingNDZ, getDrones, getPilot, sendDataToDb } from './utilityFunctions.js'
+import { getEntries } from './redis.js';
 
 const app = express()
 app.use(cors());
@@ -39,10 +40,12 @@ setInterval(async function () {
       }
     }
   }
-}, 2000);
+}, 2000); // CHANGE THIS TO 2000 for production
 
 app.get('/getDrones', async (req, res, err) => {
   // Call the redis function getEntries() and return them to the client side
+  const drones = await getEntries()
+  res.status(200).json({ drones })
 })
 
 app.listen(port, () => {

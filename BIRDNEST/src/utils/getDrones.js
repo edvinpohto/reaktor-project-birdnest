@@ -4,13 +4,13 @@ const getDrones = (url) => {
         // mode: 'cors',
         headers: {
         'Access-Control-Allow-Origin':'*',
-        'Content-Type': 'application/xml'
+        'Content-Type': 'application/json'
       }
       })
       .then(response => response.json())
       .then(data  => {
         resolve(data)
-        return;
+        return data;
       })
       .catch(err => console.log("error", err));
   })
