@@ -1,29 +1,17 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import getDrones from "../utils/getDrones";
-import getPilots from "../utils/getPilots";
 import useInterval from "../Hooks/useInterval.js"
-import formatDateAndTime from "../utils/formatDateAndTime";
-
-const testData = {
-  "captureTime": "2023-01-14T11:44:59.912Z",
-  "serialNumber":"SN-CtkCCCa494",
-  "positionX": 218396.27840733784,
-  "positionY": 266286.3543394989,
-  "distance": 35553.34803050502,
-  "pilotId": "P-dEyWAcrXkr",
-  "firstName": "Prince",
-  "lastName": "Hickle",
-  "phoneNumber": "+210537721762",
-  "createdDt": "2022-04-24T13:40:24.352Z",
-  "email": "prince.hickle@example.com"
-}
 
 function Drones() {
   const url = 'http://localhost:3000/getDrones'
   const [droneData, setDroneData] = useState([])
-  // const [droneData, setDroneData] = useState([testData])
 
-  // Activate for server connection when not testing with testdata
+  // Initial load of data.
+  getDrones(url).then(drones => {
+    setDroneData(drones.drones)
+  })
+
+  // Fetches data at an interval of 2 seconds and updates the state with it.
   useInterval(() => {
     getDrones(url).then(drones => {
       setDroneData(drones.drones)
@@ -34,7 +22,7 @@ function Drones() {
 
   return (
     <>
-      <div className="w-fullGrid mt-5 ml-5 overflow-x-auto relative shadow-md sm:rounded-md">
+      <div className="flex justify-center w-100  mt-5 ml-5 overflow-x-auto relative shadow-md sm:rounded-md">
         <div className="">
           <table className="w-full table-fixed">
             <thead className="bg-navbarBG text-grayText">
