@@ -38,11 +38,14 @@ let schema = new Schema(
 );
 
 // Main function for data storage logic. 
+// Generally, when a drone is found to violate the NDZ, the database is first queried with that drone's pilot id.
+// If an entry with that id already exists, the record is updated. The record is also only updated if the new match's distance is closer than before.
+// If the pilot does not already exist, a new entry is created.
 export async function createViolatorEntry(data) {
   await connect();
   const repository = client.fetchRepository(schema);
 
-  const pilotId = data.pilotId;
+  const pilotId = data.pilotId; // The pilot id for the drone (new) violating the NDZ
   const person = await repository.search().where('pilotId').equals(pilotId).return.all() // Fetch data with the pilotId of the violating drone
   
   // If the new violator already exists in the db, update data instead of creating a new entry.
