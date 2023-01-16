@@ -5,7 +5,7 @@ import { getEntries } from './redis.js';
 
 const app = express()
 app.use(cors());
-const port = 3000
+const port = 8080;
 
 let prevDistance; // Initate a variable that stores the previous distance. See usage below.
 
