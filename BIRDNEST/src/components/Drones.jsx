@@ -4,7 +4,7 @@ import useInterval from "../Hooks/useInterval.js"
 
 // Main component. Fetches data and displays it as a table. Styled with TailwindCSS.
 function Drones() {
-  const url = 'http://161.35.27.26:8080/getDrones/'
+  const url = 'http://localhost:3000/getDrones'
   const [droneData, setDroneData] = useState([])
 
   // Initial load of data.
