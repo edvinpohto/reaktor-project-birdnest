@@ -2,10 +2,19 @@ import express from 'express';
 import cors from 'cors';
 import { droneIsViolatingNDZ, getDrones, getPilot, sendDataToDb } from './utilityFunctions.js'
 import { getEntries } from './redis.js';
+import fs from 'fs'
+import http from 'http';
+import https from 'https';
+const privateKey  = fs.readFileSync('/etc/letsencrypt/live/edvinpohto.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/edvinpohto.com/fullchain.pem', 'utf8');
 
+const credentials = {key: privateKey, cert: certificate};
 const app = express()
 app.use(cors());
-const port = 8080;
+// const port = 8080;
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
 
 let prevDistance; // Initate a variable that stores the previous distance. See usage below.
 
@@ -49,6 +58,13 @@ app.get('/getDrones', async (req, res, err) => {
   res.status(200).json({ drones })
 })
 
-app.listen(port, () => {
-  console.log(`App is listening on port ${port}`)
-})
+httpServer.listen(8080, () => {
+  console.log(`App is listening on port 8080`)
+});
+httpsServer.listen(3000, () => {
+  console.log(`App is listening on port 3000`)
+});
+
+// app.listen(port, () => {
+//   console.log(`App is listening on port ${port}`)
+// })
