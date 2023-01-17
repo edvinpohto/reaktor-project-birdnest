@@ -15,7 +15,7 @@ setInterval(async function () {
 
   for (const drone of capture.drone) { // Loop through all captured drones
     const violation = droneIsViolatingNDZ(drone.positionX, drone.positionY) // Calling the utility function that checks whether there is a violation
-    if (violation[0]) { // If violation = true
+    if (violation[0]) { // droneIsViolatingNDZ() returns an array with the first index being a boolean value
       console.log("Found one!", "X position:", drone.positionX, "Y position:", drone.positionY)
 
       const pilot = await getPilot(drone.serialNumber) // getPilot is only called if violation was true

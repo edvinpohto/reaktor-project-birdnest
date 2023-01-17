@@ -44,7 +44,7 @@ export function droneIsViolatingNDZ(x, y) {
   const distance = Math.sqrt((x - originX) ** 2 + (y - originY) ** 2);
 
   if (distance <= radius) {
-    return  [ true, distance ]
+    return  [ true, distance ] // Returns an array where the first parameter is a boolean value and the second parameter is the distance the drone was from the nest.
   } else {
     return false
   }
